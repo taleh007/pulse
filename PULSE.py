@@ -19,6 +19,9 @@ class PULSE(torch.nn.Module):
 
         cache_dir = Path(cache_dir)
         cache_dir.mkdir(parents=True, exist_ok = True)
+
+        print("Plan to download https://drive.google.com/uc?id=1mAsooNngyIBinPr7nntOajWxP6z578a3")
+
         if self.verbose: print("Loading Synthesis Network")
         with open_url("https://drive.google.com/uc?id=1mAsooNngyIBinPr7nntOajWxP6z578a3", cache_dir=cache_dir, verbose=verbose) as f:
             self.synthesis.load_state_dict(torch.load(f))
@@ -27,15 +30,19 @@ class PULSE(torch.nn.Module):
             param.requires_grad = False
 
         self.lrelu = torch.nn.LeakyReLU(negative_slope=0.2)
+        print("\Do \"Synthesis Network.pt\"")
 
         if Path("gaussian_fit.pt").exists():
             self.gaussian_fit = torch.load("gaussian_fit.pt")
         else:
             if self.verbose: print("\tLoading Mapping Network")
             mapping = G_mapping().cuda()
+            print("Plan to download https://drive.google.com/uc?id=1QDawHIcIRlifgFZN5_3H0OzeVmHn7tS")
 
             with open_url("https://drive.google.com/uc?id=1QDawHIcIRlifgFZN5_3H0OzeVmHn7tSK", cache_dir=cache_dir, verbose=verbose) as f:
                     mapping.load_state_dict(torch.load(f))
+
+            print("\Do \"gaussian_fit.pt\"")
 
             if self.verbose: print("\tRunning Mapping Network")
             with torch.no_grad():
